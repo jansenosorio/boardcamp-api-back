@@ -33,5 +33,4 @@ export async function postGamesList(req, res) {
         res.send(error)
     }
 
-
 }
