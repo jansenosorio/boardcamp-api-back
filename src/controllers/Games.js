@@ -15,11 +15,10 @@ export async function postGamesList(req, res) {
     //Use this information to send to Database
     const { name, image, stockTotal, pricePerDay } = req.body
 
-    //Configure this variable to verify Database 
-    const isNameExistsAtDb = 'BancoImobiliário' === name
-
     try {
-        if (isNameExistsAtDb) return res.sendStatus(409)
+        const { rowCount } = await connection.query(`SELECT * FROM games WHERE name='${name}'`)
+        if (rowCount >= 1) return res.sendStatus(409)
+        await connection.query(`INSERT INTO games (name, image, "stockTotal", "pricePerDay") VALUES ('${name}', '${image}', ${stockTotal}, ${pricePerDay})`)
         res.sendStatus(201)
     } catch (error) {
         res.send(error)
