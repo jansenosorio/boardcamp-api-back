@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import gamesRouter from './routes/gamesRoutes.js'
+import customerRouter from './routes/customersRoutes.js'
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -11,7 +12,7 @@ server.use(express.json())
 server.use(cors())
 
 // Routes to use at express
-server.use(gamesRouter)
+server.use([gamesRouter, customerRouter])
 
 //Opening port to Express - Port config at .env document
 const PORT = process.env.PORT || 5010

@@ -1,7 +1,6 @@
 import { connection } from "../database/database.connection.js"
 
 export async function getGamesList(req, res) {
-
     try {
         const { rows } = await connection.query('SELECT * FROM games');
         res.send(rows)
