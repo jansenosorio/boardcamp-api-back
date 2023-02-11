@@ -1,6 +1,6 @@
 import { connection } from "../database/database.connection.js";
 import dateFormat from "dateformat";
-import { response } from "express";
+
 
 
 export async function getRentals(req, res) {
