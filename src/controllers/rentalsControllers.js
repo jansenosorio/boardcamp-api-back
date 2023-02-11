@@ -1,5 +1,6 @@
 import { connection } from "../database/database.connection.js";
 import dateFormat from "dateformat";
+import { response } from "express";
 
 
 export async function getRentals(req, res) {
@@ -104,5 +105,20 @@ export async function postReturnRentals(req, res) {
     } catch (error) {
         console.log(error)
         res.status(500).send(error)
+    }
+}
+
+export async function deleteRentals(req, res) {
+    const { id } = req.params
+
+    try {
+        const { rows, rowCount } = await connection.query(`SELECT * FROM rentals WHERE rentals.id='${id}'`)
+        if (rowCount < 1) return res.sendStatus(404)
+        if (rows[0].returnDate === null) return res.sendStatus(400)
+
+        await connection.query(`DELETE FROM rentals WHERE id='${id}'`)
+        res.sendStatus(200)
+    } catch (error) {
+        res.status(500).send(error.error)
     }
 }
