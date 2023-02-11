@@ -68,3 +68,41 @@ export async function postRegisterRentals(req, res) {
     }
 
 }
+
+export async function postReturnRentals(req, res) {
+    const { id } = req.params
+    const date = dateFormat(new Date(), 'yyyy-mm-dd')
+
+    try {
+        const { rowCount, rows } = await connection.query(`
+        SELECT *
+        FROM rentals
+        WHERE rentals.id = ${id}
+        `)
+
+        //Verifications before sendo to database
+        if (rowCount < 1) return res.sendStatus(404)
+        if (rows[0].returnDate !== null) return res.sendStatus(400)
+
+        //const to calculate diference between rent date and devolution date
+        const rentalDate = dateFormat(rows[0].rentDate, 'yyyy-mm-dd')
+        const daysRentedNow = (new Date(rentalDate) - new Date(date)) / (1000 * 60 * 60 * 24) * -1
+        let feeToPay = 0
+        if (daysRentedNow > rows[0].daysRented) {
+            let differenceBetweenDates = daysRentedNow - rows[0].daysRented
+            let feeForDay = rows[0].originalPrice / rows[0].daysRented
+            feeToPay = differenceBetweenDates * feeForDay
+        }
+
+        //Update at database
+        await connection.query(`
+            UPDATE rentals
+            SET "returnDate"='${date}', "delayFee"='${feeToPay}'
+            WHERE id='${id}'
+        `)
+        res.sendStatus(200)
+    } catch (error) {
+        console.log(error)
+        res.status(500).send(error)
+    }
+}
