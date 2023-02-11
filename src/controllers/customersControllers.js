@@ -18,7 +18,7 @@ export async function getCustomersById(req, res) {
     try {
         const { rows, rowCount } = await connection.query(`SELECT * FROM customers WHERE id='${id}'`)
         if (rowCount === 0) return res.sendStatus(404)
-        res.send(rows)
+        res.send(rows[0])
     } catch (error) {
         res.status(500).send(error)
     }
